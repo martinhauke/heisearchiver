@@ -49,7 +49,7 @@ def get_articles(article_links, path=ARCHIVE_PATH):
             print("file exists -> skipping")
             continue
         soup = BeautifulSoup(get_page(BASE_URL+href), "html.parser")
-        with open(ARCHIVE_PATH + article_id, 'wb') as f:
+        with open(path + article_id, 'wb') as f:
             f.write(soup.prettify().encode("utf-8"))
         for article in soup.find_all(attrs={"data-article-type": "meldung"}):
             print("article downloaded")
