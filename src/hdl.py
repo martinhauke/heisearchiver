@@ -37,12 +37,15 @@ def extract_article_links(content):
 
 def get_articles(article_links):
     for article_id, href in article_links.items():
-        soup = BeautifulSoup(get_page(base_url+href))
         print("==== " + article_id + "====")
+        if os.path.isfile(archive_path + article_id):
+            print("file exists")
+            continue
+        soup = BeautifulSoup(get_page(base_url+href))
         with open(archive_path + article_id, 'w') as f:
             f.write(soup.prettify())
         for article in soup.find_all(attrs={"data-article-type": "meldung"}):
-            print("article found")
+            print("article downloaded")
 
 
 def main():
