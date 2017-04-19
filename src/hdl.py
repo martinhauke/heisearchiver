@@ -9,7 +9,8 @@ cwd = os.path.dirname(__file__)
 print(cwd)
 archive_path = os.path.join(cwd, '../archive/')
 print(archive_path)
-url = 'https://www.heise.de'
+base_url = 'https://www.heise.de/'
+url = 'https://www.heise.de/newsticker'
 
 
 def get_page(url):
@@ -36,7 +37,7 @@ def extract_article_links(content):
 
 def get_articles(article_links):
     for article_id, href in article_links.items():
-        soup = BeautifulSoup(get_page(url+href))
+        soup = BeautifulSoup(get_page(base_url+href))
         print("==== " + article_id + "====")
         with open(archive_path + article_id, 'w') as f:
             f.write(soup.prettify())
