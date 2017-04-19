@@ -27,7 +27,7 @@ class TestHDL(unittest.TestCase):
         my_opener = urllib.request.build_opener(MyHTTPHandler)
         urllib.request.install_opener(my_opener)
 
-    def test_get_start_page(self):
+    def test_get_page(self):
         url = "http://example.com"
         response = urllib.request.urlopen(url)
 
