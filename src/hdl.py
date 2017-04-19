@@ -45,6 +45,11 @@ def get_articles(article_links):
             print("article found")
 
 
-links = extract_article_links(str(get_page(url)))
-get_articles(links)
-# print(links)
+def main():
+    links = extract_article_links(str(get_page(url)))
+    get_articles(links)
+    # print(links)
+
+
+if __name__ == "__main__":
+    main()
