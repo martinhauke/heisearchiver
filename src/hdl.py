@@ -35,7 +35,9 @@ def extract_article_links(content):
     for link in soup.find_all('a'):
         lhref = link.get('href')
         if "/newsticker/meldung/" in lhref:
-            article_id = lhref[-12:-5]
+            article_id_starts_at = lhref.rfind('-') + 1
+            article_id_ends_at = lhref.rfind('.') - 1
+            article_id = lhref[article_id_starts_at:article_id_ends_at]
             if helpers.is_valid_article_id(article_id):
                 article_links[article_id] = lhref
 
