@@ -44,20 +44,20 @@ def extract_article_links(content):
 
 def get_articles(article_links):
     for article_id, href in article_links.items():
-        print("article id: " + article_id)
+        print("article id: " + article_id + " link: " + href)
         if os.path.isfile(archive_path + article_id):
             print("file exists -> skipping")
             continue
-        soup = BeautifulSoup(get_page(BASE_URL+href))
-        with open(archive_path + article_id, 'w') as f:
-            f.write(soup.prettify())
+        soup = BeautifulSoup(get_page(BASE_URL+href), "html.parser")
+        with open(archive_path + article_id, 'wb') as f:
+            f.write(soup.prettify().encode("utf-8"))
         for article in soup.find_all(attrs={"data-article-type": "meldung"}):
             print("article downloaded")
 
 
 def fetch_archive():
     WEEKS = 52
-    YEARS = ['2017', '2016', '2015']
+    YEARS = ['2017', '2016', '2015', 2014]
 
     for year in YEARS:
         for week in range(WEEKS):
