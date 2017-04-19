@@ -17,7 +17,6 @@ def mock_response(req):
 
 class MyHTTPHandler(urllib.request.HTTPHandler):
     def http_open(self, req):
-        print("mock opener")
         return mock_response(req)
 
 
@@ -31,7 +30,32 @@ class TestHDL(unittest.TestCase):
         url = "http://example.com"
         response = urllib.request.urlopen(url)
 
-        self.assertEqual(hdl.get_start_page(url), response.read())
+        self.assertEqual(hdl.get_page(url), response.read())
 
     def test_extract_article_links(self):
-        pass
+        content = """
+        <html>
+        <head></head>
+        <body>
+            <a href='/should-be-ignored'>ignore me</a>
+            <a href='/newsticker/meldung/article-name-1234567.html'>
+                find me once
+            </a>
+            <a href='/newsticker/meldung/article-name-1234567.html'>
+                find me once
+            </a>
+            <a href='/newsticker/meldung/article-name-1234568.html'>
+                find me, too
+            </a>
+            <a href='/newsticker/meldung/wrong-format.html'>
+                this link is wrong
+            </a>
+            <a href='/newsticker/should-be-ignored'>ignore me</a>
+        </body>
+        </html>
+        """
+        valid_links = {
+            '1234567': '/newsticker/meldung/article-name-1234567.html',
+            '1234568': '/newsticker/meldung/article-name-1234568.html'}
+
+        self.assertDictEqual(hdl.extract_article_links(content), valid_links)

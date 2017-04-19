@@ -1,6 +1,7 @@
 # Heise downloader (hdl)
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+from src import helpers
 
 url = 'https://www.heise.de'
 
@@ -21,9 +22,11 @@ def extract_article_links(content):
         lhref = link.get('href')
         if "/newsticker/meldung/" in lhref:
             article_id = lhref[-12:-5]
-            article_links[article_id] = lhref
+            if helpers.is_valid_article_id(article_id):
+                article_links[article_id] = lhref
+
     return article_links
 
 
-links = extract_article_links(str(get_page(url)))
-print(links)
+# links = extract_article_links(str(get_page(url)))
+# print(links)
