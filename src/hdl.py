@@ -57,12 +57,16 @@ def get_articles(article_links):
 
 def fetch_archive():
     WEEKS = 52
-    YEARS = ['2017', '2016', '2015', 2014]
+    YEARS = ['2016', '2015', '2014']
 
     for year in YEARS:
+        global archive_path
+        archive_path += str(year) + "/"
+        if not os.path.exists(archive_path):
+            os.makedirs(archive_path)
         for week in range(WEEKS):
             archive_url = ARCHIVE_BASE_URL
-            archive_url += "?Jahr=" + year + ";woche=" + str(week)
+            archive_url += "?jahr=" + str(year) + ";woche=" + str(week)
 
             extract_url = str(get_page(archive_url))
 
