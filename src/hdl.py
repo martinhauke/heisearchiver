@@ -8,8 +8,8 @@ from src import helpers
 
 cwd = os.path.dirname(__file__)
 print(cwd)
-archive_path = os.path.join(cwd, '../archive/')
-print(archive_path)
+ARCHIVE_PATH = os.path.join(cwd, '../archive/')
+print(ARCHIVE_PATH)
 BASE_URL = 'https://www.heise.de/'
 # https://www.heise.de/newsticker/archiv/?jahr=2017;woche=3
 URL = 'https://www.heise.de/newsticker'
@@ -42,14 +42,14 @@ def extract_article_links(content):
     return article_links
 
 
-def get_articles(article_links):
+def get_articles(article_links, path=ARCHIVE_PATH):
     for article_id, href in article_links.items():
         print("article id: " + article_id + " link: " + href)
-        if os.path.isfile(archive_path + article_id):
+        if os.path.isfile(path + article_id):
             print("file exists -> skipping")
             continue
         soup = BeautifulSoup(get_page(BASE_URL+href), "html.parser")
-        with open(archive_path + article_id, 'wb') as f:
+        with open(ARCHIVE_PATH + article_id, 'wb') as f:
             f.write(soup.prettify().encode("utf-8"))
         for article in soup.find_all(attrs={"data-article-type": "meldung"}):
             print("article downloaded")
@@ -60,8 +60,7 @@ def fetch_archive():
     YEARS = ['2016', '2015', '2014']
 
     for year in YEARS:
-        global archive_path
-        archive_path += str(year) + "/"
+        archive_path = ARCHIVE_PATH + str(year) + "/"
         if not os.path.exists(archive_path):
             os.makedirs(archive_path)
         for week in range(WEEKS):
@@ -74,7 +73,7 @@ def fetch_archive():
                 links = extract_article_links(extract_url)
                 print("=== retrieving articles ["
                       + year + " week " + str(week) + "] ===")
-                get_articles(links)
+                get_articles(links, path=archive_path)
 
     return 0
 
