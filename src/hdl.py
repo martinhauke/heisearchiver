@@ -1,8 +1,14 @@
 # Heise downloader (hdl)
+import os
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 from src import helpers
 
+
+cwd = os.path.dirname(__file__)
+print(cwd)
+archive_path = os.path.join(cwd, '../archive/')
+print(archive_path)
 url = 'https://www.heise.de'
 
 
@@ -28,5 +34,16 @@ def extract_article_links(content):
     return article_links
 
 
-# links = extract_article_links(str(get_page(url)))
+def get_articles(article_links):
+    for article_id, href in article_links.items():
+        soup = BeautifulSoup(get_page(url+href))
+        print("==== " + article_id + "====")
+        with open(archive_path + article_id, 'w') as f:
+            f.write(soup.prettify())
+        for article in soup.find_all(attrs={"data-article-type": "meldung"}):
+            print("article found")
+
+
+links = extract_article_links(str(get_page(url)))
+get_articles(links)
 # print(links)
