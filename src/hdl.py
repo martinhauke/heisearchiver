@@ -67,8 +67,9 @@ def get_articles(article_links, path=ARCHIVE_PATH):
         soup = BeautifulSoup(content, "html.parser")
         with open(path + article_id, 'wb') as f:
             f.write(soup.prettify().encode("utf-8"))
-        for article in soup.find_all(attrs={"data-article-type": "meldung"}):
-            print("article downloaded")
+            print("article saved to ..." + f.name[-15:])
+        # for article in soup.find_all(attrs={"data-article-type": "meldung"}):
+        #    print("article downloaded")
 
 
 def fetch_archive():
