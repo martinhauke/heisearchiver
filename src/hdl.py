@@ -34,7 +34,7 @@ def extract_article_links(content):
 
     for link in soup.find_all('a'):
         lhref = link.get('href')
-        if "/newsticker/meldung/" in lhref:
+        if "/meldung/" in lhref:
             article_id_starts_at = lhref.rfind('-') + 1
             article_id_ends_at = lhref.rfind('.')
             article_id = lhref[article_id_starts_at:article_id_ends_at]
@@ -50,7 +50,11 @@ def get_articles(article_links, path=ARCHIVE_PATH):
         if os.path.isfile(path + article_id):
             print("file exists -> skipping")
             continue
-        soup = BeautifulSoup(get_page(BASE_URL+href), "html.parser")
+        content = get_page(BASE_URL+href)
+        if not content:
+            print("Page not found")
+            continue
+        soup = BeautifulSoup(content, "html.parser")
         with open(path + article_id, 'wb') as f:
             f.write(soup.prettify().encode("utf-8"))
         for article in soup.find_all(attrs={"data-article-type": "meldung"}):
@@ -59,7 +63,7 @@ def get_articles(article_links, path=ARCHIVE_PATH):
 
 def fetch_archive():
     WEEKS = 52
-    YEARS = ['2016', '2015', '2014']
+    YEARS = ['2017', '2016', '2015', '2014', '2013', '2012', '2011']
 
     for year in YEARS:
         archive_path = ARCHIVE_PATH + str(year) + "/"
