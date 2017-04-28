@@ -7,32 +7,18 @@ def is_valid_article_id(string):
     return len(string) >= 4 and len(string) <= 7 and string.isdigit()
 
 
-def check_for_articles_with_multiple_authors(path_to_archive):
-    """This method is just for checking if articles with multiple authors
+def check_for_attributes_with_multiple_values(path_to_archive, attributes,
+                                              tag=None):
+    """This method is just for checking if articles with multiple values for
 
-    exist"""
-
-    for filename in os.listdir(path_to_archive):
-        with open(path_to_archive + filename, 'rb') as f:
-            soup = BeautifulSoup(f.read(), "html.parser")
-            authors = soup.find_all("meta", {"name": "author"})
-            authors = authors[0].attrs['content']
-            if ',' in authors or '/' in authors:
-                print("Multiple authors found: " + authors)
-
-
-def check_for_articles_with_multiple_topics(path_to_archive):
-    """This method is just for checking if articles with multiple topics
-
-    exist"""
-
-    # THIS CODE IS A DUPLICATE OF THE ABOVE. I FEEL ASHAMED AND WILL DELETE IT
-    # SOON(TM)
+    a specific attribute exist"""
 
     for filename in os.listdir(path_to_archive):
         with open(path_to_archive + filename, 'rb') as f:
             soup = BeautifulSoup(f.read(), "html.parser")
-            topics = soup.find_all("meta", {"name": "topic"})
-            topics = topics[0].attrs['content']
-            if ',' in topics or '/' in topics:
-                print("Multiple topics found: " + topics)
+            values = soup.find_all(tag, attributes)
+            values = values[0].attrs['content']
+
+            print(values)
+            if ',' in values or '/' in values:
+                print("Multiple values found: " + values)

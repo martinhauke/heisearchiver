@@ -102,7 +102,7 @@ def main(argv):
     print_paths()
     years = ['2017', '2016', '2015', '2014', '2013', '2012', '2011']
     try:
-        opts, args = getopt.getopt(argv, "ahty:", ["years="])
+        opts, args = getopt.getopt(argv, "hty:", ["years="])
     except getopt.GetoptError:
         print('Usage: python src.hdl [-y <years>]')
         sys.exit(2)
@@ -112,13 +112,11 @@ def main(argv):
             sys.exit()
         elif opt in ("-y", "--years"):
             years = arg.split(',')
-        elif opt in "-a":
-            helpers.check_for_articles_with_multiple_authors(ARCHIVE_PATH
-                                                             + "/2017/")
-            sys.exit(0)
         elif opt in "-t":
-            helpers.check_for_articles_with_multiple_topics(ARCHIVE_PATH +
-                                                            "/2017/")
+            helpers.check_for_attributes_with_multiple_values(
+                ARCHIVE_PATH + "/2017/",
+                attributes={"name": "publisher"},
+                tag="meta")
             sys.exit(0)
 
     fetch_archive(years)
