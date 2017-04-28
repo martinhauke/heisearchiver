@@ -1,5 +1,7 @@
 # Heise downloader (hdl)
 import os
+import sys
+import getopt
 from urllib.request import urlopen
 import urllib.error
 from bs4 import BeautifulSoup
@@ -74,11 +76,10 @@ def get_articles(article_links, local_archive_path=ARCHIVE_PATH):
         #    print("article downloaded")
 
 
-def fetch_archive():
+def fetch_archive(years):
     WEEKS = 52
-    YEARS = ['2017', '2016', '2015', '2014', '2013', '2012', '2011']
 
-    for year in YEARS:
+    for year in years:
         archive_path = ARCHIVE_PATH + str(year) + "/"
         if not os.path.exists(archive_path):
             os.makedirs(archive_path)
@@ -97,13 +98,26 @@ def fetch_archive():
     return 0
 
 
-def main():
+def main(argv):
     print_paths()
-    fetch_archive()
+    years = ['2017', '2016', '2015', '2014', '2013', '2012', '2011']
+    try:
+        opts, args = getopt.getopt(argv, "hy:", ["years="])
+    except getopt.GetoptError:
+        print('Usage: python src.hdl [-y <years>]')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print('Usage: python src.hdl [-y <years>]')
+            sys.exit()
+        elif opt in ("-y", "--years"):
+            years = arg.split(',')
+
+    fetch_archive(years)
     # links = extract_article_links(str(get_page(URL)))
     # get_articles(links)
     # print(links)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
