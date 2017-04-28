@@ -3,15 +3,9 @@ import os
 from urllib.request import urlopen
 import urllib.error
 from bs4 import BeautifulSoup
+from io import StringIO
 from src import helpers
-
-
-cwd = os.path.dirname(__file__)
-ARCHIVE_PATH = os.path.join(cwd, '../archive/')
-BASE_URL = 'https://www.heise.de/'
-URL = 'https://www.heise.de/newsticker'
-# https://www.heise.de/newsticker/archiv/?jahr=2017;woche=3
-ARCHIVE_BASE_URL = 'https://www.heise.de/newsticker/archiv/'
+from src.config import ARCHIVE_PATH, BASE_URL, ARCHIVE_BASE_URL, cwd
 
 
 def print_paths():
@@ -30,6 +24,9 @@ def get_page(url):
         webContent = response.read()
     except urllib.error.HTTPError as e:
         print(e.code)
+        return None
+    except ValueError as e:
+        print("Invalid URL")
         return None
 
     return webContent
@@ -53,11 +50,16 @@ def extract_article_links(content):
     return article_links
 
 
-def get_articles(article_links, path=ARCHIVE_PATH):
+def write_article_to_file(content, outfile=StringIO()):
+    """Writes content to a file"""
+    outfile.write(content)
+
+
+def get_articles(article_links, local_archive_path=ARCHIVE_PATH):
     """Downloads and saves articles in an archive"""
     for article_id, href in article_links.items():
         print("article id: " + article_id + " link: " + href)
-        if os.path.isfile(path + article_id):
+        if os.path.isfile(local_archive_path + article_id):
             print("*** file already exists -> skipping")
             continue
         content = get_page(BASE_URL+href)
@@ -65,8 +67,8 @@ def get_articles(article_links, path=ARCHIVE_PATH):
             print("[ERROR]: Page not found")
             continue
         soup = BeautifulSoup(content, "html.parser")
-        with open(path + article_id, 'wb') as f:
-            f.write(soup.prettify().encode("utf-8"))
+        with open(local_archive_path + article_id, 'wb') as f:
+            write_article_to_file(soup.prettify().encode("utf-8"), f)
             print("article saved to ..." + f.name[-15:])
         # for article in soup.find_all(attrs={"data-article-type": "meldung"}):
         #    print("article downloaded")
@@ -90,7 +92,7 @@ def fetch_archive():
                 links = extract_article_links(extract_url)
                 print("=== retrieving articles ["
                       + year + " week " + str(week) + "] ===")
-                get_articles(links, path=archive_path)
+                get_articles(links, local_archive_path=archive_path)
 
     return 0
 
