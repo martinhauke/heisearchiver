@@ -127,3 +127,9 @@ class TestHDL(unittest.TestCase):
                 soup = BeautifulSoup(response.read(), "html.parser")
                 self.assertEqual(soup.prettify(), f.read())
             os.remove(path_to_file)
+
+    def test_write_article_to_file(self):
+        content = "this ist a test;\nthis is a test on the next level"
+        mockfile = StringIO()
+        hdl.write_article_to_file(content, outfile=mockfile)
+        self.assertEqual(content, mockfile.getvalue())
