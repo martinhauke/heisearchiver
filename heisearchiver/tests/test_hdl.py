@@ -1,10 +1,10 @@
 # Testing hdl.py
 import os
 import unittest
-from src import hdl
+from heisearchiver import hdl
 from io import StringIO
 import urllib.request
-from src.config import BASE_URL, PATH_FOR_TEST_FILES
+from heisearchiver.config import BASE_URL, PATH_FOR_TEST_FILES
 from bs4 import BeautifulSoup
 
 

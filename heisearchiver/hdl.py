@@ -6,8 +6,8 @@ from urllib.request import urlopen
 import urllib.error
 from bs4 import BeautifulSoup
 from io import StringIO
-from src import helpers
-from src.config import ARCHIVE_PATH, BASE_URL, ARCHIVE_BASE_URL, cwd
+from heisearchiver import helpers
+from heisearchiver.config import ARCHIVE_PATH, BASE_URL, ARCHIVE_BASE_URL, cwd
 
 
 def print_paths():
@@ -104,11 +104,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hty:", ["years="])
     except getopt.GetoptError:
-        print('Usage: python src.hdl [-y <years>]')
+        print('Usage: python heisearchiver.hdl [-y <years>]')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('Usage: python src.hdl [-y <years>]')
+            print('Usage: python heisearchiver.hdl [-y <years>]')
             sys.exit()
         elif opt in ("-y", "--years"):
             years = arg.split(',')

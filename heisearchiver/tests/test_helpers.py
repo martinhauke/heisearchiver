@@ -1,6 +1,6 @@
 # Testing helpers.py
 import unittest
-from src import helpers
+from heisearchiver import helpers
 
 
 class TestHelpers(unittest.TestCase):
