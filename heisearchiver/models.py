@@ -1,5 +1,6 @@
 # Database models for the archive
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Table, Column, Integer, String, ForeignKey, DateTime
 
 Base = declarative_base()
@@ -26,25 +27,6 @@ article_topic = Table('article_topic', Base.metadata,
                              primary_key=True))
 
 # association table
-article_image = Table('article_image', Base.metadata,
-                      Column('article_id', ForeignKey('article.id'),
-                             primary_key=True),
-                      Column('image_id', ForeignKey('image.id'),
-                             primary_key=True),
-                      Column('alt', String, nullable=True),
-                      Column('caption', String, nullable=True))
-
-# association table
-article_link = Table('article_link', Base.metadata,
-                     Column('article_id', ForeignKey('article.id'),
-                            primary_key=True),
-                     Column('link_id', ForeignKey('link.id'),
-                            primary_key=True),
-                     Column('rel', String, nullable=True),
-                     Column('text', String),
-                     Column('target', String))
-
-# association table
 article_source = Table('article_source', Base.metadata,
                        Column('article_id', ForeignKey('article.id'),
                               primary_key=True),
@@ -57,6 +39,29 @@ image_source = Table('image_source', Base.metadata,
                             primary_key=True),
                      Column('source_id', ForeignKey('source.id'),
                             primary_key=True))
+
+
+# association table
+class Articles_Images(Base):
+    __tablename__ = 'articles_images'
+    article_id = Column(Integer, ForeignKey('article.id'), primary_key=True)
+    image_id = Column(Integer, ForeignKey('image.id'), primary_key=True)
+    alt = Column(String, nullable=True),
+    caption = Column(String, nullable=True)
+
+    Images = relationship("Image")
+
+
+# association table
+class Articles_Links(Base):
+    __tablename__ = 'articles_links'
+    article_id = Column(Integer, ForeignKey('article.id'), primary_key=True)
+    link_id = Column(Integer, ForeignKey('link.id'), primary_key=True)
+    rel = Column(String, nullable=True),
+    text = Column(String),
+    target = Column(String)
+
+    links = relationship("Link")
 
 
 class Article(Base):
@@ -80,6 +85,25 @@ class Article(Base):
     article_content_plain = Column(String)
     article_teaser = Column(String)
     number_of_comments = Column(Integer)
+
+    authors = relationship("Author", secondary=article_author,
+                           backref=backref('article',
+                                           cascade="all, delete-orphans"))
+    keywords = relationship("Keyword", secondary=article_keyword,
+                            backref=backref('article',
+                                            cascade="all, delete-orphans"))
+    topics = relationship("Topic", secondary=article_topic,
+                          backref=backref('article',
+                                          cascade="all, delete-orphans"))
+    sources = relationship("Source", secondary=article_source,
+                           backref=backref('article',
+                                           cascade="all, delete-orphans"))
+
+    images = relationship("Article_Image")
+    links = relationship("Article_Link")
+
+    subheadings = relationship("Subheading", backref='article')
+    paragraphs = relationship("Paragraph", backref='article')
 
 
 class Author(Base):
