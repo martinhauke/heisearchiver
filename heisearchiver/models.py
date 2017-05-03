@@ -73,3 +73,78 @@ class Article(Base):
     og_locale = Column(String(32))
     og_type = Column(String)
     og_url = Column(String)
+    og_description = Column(String)
+    article_heading = Column(String)
+    article_date = Column(DateTime)
+    article_content_html = Column(String)
+    article_content_plain = Column(String)
+    article_teaser = Column(String)
+    number_of_comments = Column(Integer)
+
+
+class Author(Base):
+    __tablename__ = 'author'
+
+    id = Column(Integer, primary_key=True)
+
+    name = Column(String(255))
+    abbreviation = Column(String(10))
+
+
+class Topic(Base):
+    __tablename__ = 'topic'
+
+    id = Column(Integer, primary_key=True)
+
+    name = Column(String(64))
+
+
+class Keyword(Base):
+    __tablename__ = 'keyword'
+
+    id = Column(Integer, primary_key=True)
+
+    name = Column(String(64))
+
+
+class Source(Base):
+    __tablename__ = 'source'
+
+    id = Column(Integer, primary_key=True)
+
+    name = Column(String(64))
+
+
+class Image(Base):
+    __tablename__ = 'image'
+
+    id = Column(Integer, primary_key=True)
+
+    src = Column(String)
+
+
+class Link(Base):
+    __tablename__ = 'link'
+
+    id = Column(Integer, primary_key=True)
+
+    url = Column(String)
+
+
+class Subheading(Base):
+    __tablename__ = 'subheading'
+
+    id = Column(Integer, primary_key=True)
+
+    article_id = Column(ForeignKey('article.id'))
+    text = Column(String)
+
+
+class Paragraph(Base):
+    __tablename__ = 'paragraph'
+
+    id = Column(Integer, primary_key=True)
+
+    article_id = Column(ForeignKey('article.id'))
+    text_html = Column(String)
+    text_plain = Column(String)
