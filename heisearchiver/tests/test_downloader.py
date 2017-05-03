@@ -1,7 +1,7 @@
-# Testing hdl.py
+# Testing downloader.py
 import os
 import unittest
-from heisearchiver import hdl
+from heisearchiver import downloader
 from io import StringIO
 import urllib.request
 from heisearchiver.config import BASE_URL, PATH_FOR_TEST_FILES
@@ -62,7 +62,7 @@ class MyHTTPSHandler(urllib.request.HTTPSHandler):
         return mock_response(req)
 
 
-class TestHDL(unittest.TestCase):
+class TestDownloader(unittest.TestCase):
 
     def setUp(self):
         my_opener = urllib.request.build_opener(MyHTTPHandler, MyHTTPSHandler)
@@ -74,15 +74,15 @@ class TestHDL(unittest.TestCase):
         url = "http://example.com"
         response = urllib.request.urlopen(url)
 
-        self.assertEqual(hdl.get_page(url), response.read())
+        self.assertEqual(downloader.get_page(url), response.read())
 
     def test_get_page_with_invalid_url(self):
         url = "thisisnotavalidurl"
 
-        self.assertIsNone(hdl.get_page(url))
+        self.assertIsNone(downloader.get_page(url))
 
     def test_get_page_that_does_not_exist(self):
-        self.assertIsNone(hdl.get_page("http://notapage.com"))
+        self.assertIsNone(downloader.get_page("http://notapage.com"))
 
     def test_extract_article_links(self):
         content = """
@@ -110,7 +110,8 @@ class TestHDL(unittest.TestCase):
             '1234567': '/newsticker/meldung/article-name-1234567.html',
             '1234568': '/newsticker/meldung/article-name-1234568.html'}
 
-        self.assertDictEqual(hdl.extract_article_links(content), valid_links)
+        self.assertDictEqual(downloader.extract_article_links(content),
+                             valid_links)
 
     def test_get_articles(self):
         article_links = {
@@ -118,7 +119,8 @@ class TestHDL(unittest.TestCase):
             '123457': "article-123457.html",
         }
 
-        hdl.get_articles(article_links, local_archive_path=PATH_FOR_TEST_FILES)
+        downloader.get_articles(article_links,
+                                local_archive_path=PATH_FOR_TEST_FILES)
 
         for article_id, href in article_links.items():
             path_to_file = PATH_FOR_TEST_FILES + article_id
@@ -131,5 +133,5 @@ class TestHDL(unittest.TestCase):
     def test_write_article_to_file(self):
         content = "this ist a test;\nthis is a test on the next level"
         mockfile = StringIO()
-        hdl.write_article_to_file(content, outfile=mockfile)
+        downloader.write_article_to_file(content, outfile=mockfile)
         self.assertEqual(content, mockfile.getvalue())

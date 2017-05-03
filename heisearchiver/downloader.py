@@ -1,4 +1,4 @@
-# Heise downloader (hdl)
+# Heise downloader
 import os
 import sys
 import getopt
@@ -104,11 +104,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hty:", ["years="])
     except getopt.GetoptError:
-        print('Usage: python heisearchiver.hdl [-y <years>]')
+        print('Usage: python heisearchiver.downloader [-y <years>]')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('Usage: python heisearchiver.hdl [-y <years>]')
+            print('Usage: python heisearchiver.downloader [-y <years>]')
             sys.exit()
         elif opt in ("-y", "--years"):
             years = arg.split(',')
