@@ -5,8 +5,7 @@ import getopt
 from urllib.request import urlopen
 import urllib.error
 from bs4 import BeautifulSoup
-from io import StringIO
-from heisearchiver import helpers
+from heisearchiver import helpers, archiver
 from heisearchiver.config import ARCHIVE_PATH, BASE_URL, ARCHIVE_BASE_URL, cwd
 
 
@@ -52,11 +51,6 @@ def extract_article_links(content):
     return article_links
 
 
-def write_article_to_file(content, outfile=StringIO()):
-    """Writes content to a file"""
-    outfile.write(content)
-
-
 def get_articles(article_links, local_archive_path=ARCHIVE_PATH):
     """Downloads and saves articles in an archive"""
     for article_id, href in article_links.items():
@@ -69,9 +63,8 @@ def get_articles(article_links, local_archive_path=ARCHIVE_PATH):
             print("[ERROR]: Page not found")
             continue
         soup = BeautifulSoup(content, "html.parser")
-        with open(local_archive_path + article_id, 'wb') as f:
-            write_article_to_file(soup.prettify().encode("utf-8"), f)
-            print("article saved to ..." + f.name[-15:])
+        archiver.save_article(article_id, soup.prettify().encode("utf-8"),
+                              local_archive_path)
         # for article in soup.find_all(attrs={"data-article-type": "meldung"}):
         #    print("article downloaded")
 

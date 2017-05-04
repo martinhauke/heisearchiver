@@ -19,6 +19,9 @@ def mock_response(req):
         return resp
     elif req.get_full_url() == BASE_URL + "article-123456.html":
         message = """<html>
+        <head>
+        <meta content="2017-01-06T19:00:00" name="date"/>
+        </head>
         <body>
         <article>This is an article</article>
         </body>
@@ -31,6 +34,9 @@ def mock_response(req):
         return resp
     elif req.get_full_url() == BASE_URL + "article-123457.html":
         message = """<html>
+        <head>
+        <meta content="2017-01-06T19:00:00" name="date"/>
+        </head>
         <body>
         <article>This is another article</article>
         </body>
@@ -123,15 +129,9 @@ class TestDownloader(unittest.TestCase):
                                 local_archive_path=PATH_FOR_TEST_FILES)
 
         for article_id, href in article_links.items():
-            path_to_file = PATH_FOR_TEST_FILES + article_id
+            path_to_file = PATH_FOR_TEST_FILES + "2017/" + article_id
             with open(path_to_file, 'r') as f:
                 response = urllib.request.urlopen(BASE_URL + href)
                 soup = BeautifulSoup(response.read(), "html.parser")
                 self.assertEqual(soup.prettify(), f.read())
             os.remove(path_to_file)
-
-    def test_write_article_to_file(self):
-        content = "this ist a test;\nthis is a test on the next level"
-        mockfile = StringIO()
-        downloader.write_article_to_file(content, outfile=mockfile)
-        self.assertEqual(content, mockfile.getvalue())
