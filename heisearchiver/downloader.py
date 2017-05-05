@@ -73,9 +73,7 @@ def fetch_archive(years):
     WEEKS = 52
 
     for year in years:
-        archive_path = ARCHIVE_PATH + str(year) + "/"
-        if not os.path.exists(archive_path):
-            os.makedirs(archive_path)
+        archive_path = ARCHIVE_PATH
         for week in range(1, WEEKS + 1):
             archive_url = ARCHIVE_BASE_URL
             archive_url += "?jahr=" + str(year) + ";woche=" + str(week)
@@ -83,7 +81,7 @@ def fetch_archive(years):
             extract_url = str(get_page(archive_url))
 
             if extract_url:
-                links = extract_article_links(extract_url)
+                links = extract_article_links(extract_url + str(year) + '/')
                 print("=== retrieving articles ["
                       + year + " week " + str(week) + "] ===")
                 get_articles(links, local_archive_path=archive_path)
