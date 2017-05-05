@@ -81,7 +81,7 @@ def fetch_archive(years):
             extract_url = str(get_page(archive_url))
 
             if extract_url:
-                links = extract_article_links(extract_url + str(year) + '/')
+                links = extract_article_links(extract_url)
                 print("=== retrieving articles ["
                       + year + " week " + str(week) + "] ===")
                 get_articles(links, local_archive_path=archive_path)
