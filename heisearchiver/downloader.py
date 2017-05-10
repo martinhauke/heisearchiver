@@ -1,5 +1,4 @@
 # Heise downloader
-import os
 import sys
 import getopt
 from urllib.request import urlopen
@@ -55,7 +54,8 @@ def get_articles(article_links, local_archive_path=ARCHIVE_PATH):
     """Downloads and saves articles in an archive"""
     for article_id, href in article_links.items():
         print("article id: " + article_id + " link: " + href)
-        if os.path.isfile(local_archive_path + article_id):
+        if helpers.find_article_in_local_archive(article_id,
+                                                 path=local_archive_path):
             print("*** file already exists -> skipping")
             continue
         content = get_page(BASE_URL+href)
@@ -73,7 +73,6 @@ def fetch_archive(years):
     WEEKS = 52
 
     for year in years:
-        archive_path = ARCHIVE_PATH
         for week in range(1, WEEKS + 1):
             archive_url = ARCHIVE_BASE_URL
             archive_url += "?jahr=" + str(year) + ";woche=" + str(week)
@@ -84,7 +83,7 @@ def fetch_archive(years):
                 links = extract_article_links(extract_url)
                 print("=== retrieving articles ["
                       + year + " week " + str(week) + "] ===")
-                get_articles(links, local_archive_path=archive_path)
+                get_articles(links, local_archive_path=ARCHIVE_PATH)
 
     return 0
 

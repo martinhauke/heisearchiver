@@ -22,3 +22,9 @@ def check_for_attributes_with_multiple_values(path_to_archive, attributes,
             print(values)
             if ',' in values or '/' in values:
                 print("Multiple values found: " + values)
+
+
+def find_article_in_local_archive(article_id, path):
+    for root, dirs, files in os.walk(path):
+        if article_id in files:
+            return os.path.join(root, article_id)
