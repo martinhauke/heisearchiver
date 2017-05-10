@@ -1,12 +1,10 @@
-# Heise downloader (hdl)
-import os
+# Heise downloader
 import sys
 import getopt
 from urllib.request import urlopen
 import urllib.error
 from bs4 import BeautifulSoup
-from io import StringIO
-from heisearchiver import helpers
+from heisearchiver import helpers, archiver
 from heisearchiver.config import ARCHIVE_PATH, BASE_URL, ARCHIVE_BASE_URL, cwd
 
 
@@ -52,16 +50,12 @@ def extract_article_links(content):
     return article_links
 
 
-def write_article_to_file(content, outfile=StringIO()):
-    """Writes content to a file"""
-    outfile.write(content)
-
-
 def get_articles(article_links, local_archive_path=ARCHIVE_PATH):
     """Downloads and saves articles in an archive"""
     for article_id, href in article_links.items():
         print("article id: " + article_id + " link: " + href)
-        if os.path.isfile(local_archive_path + article_id):
+        if helpers.find_article_in_local_archive(article_id,
+                                                 path=local_archive_path):
             print("*** file already exists -> skipping")
             continue
         content = get_page(BASE_URL+href)
@@ -69,20 +63,17 @@ def get_articles(article_links, local_archive_path=ARCHIVE_PATH):
             print("[ERROR]: Page not found")
             continue
         soup = BeautifulSoup(content, "html.parser")
-        with open(local_archive_path + article_id, 'wb') as f:
-            write_article_to_file(soup.prettify().encode("utf-8"), f)
-            print("article saved to ..." + f.name[-15:])
+        archiver.save_article(article_id, soup.prettify().encode("utf-8"),
+                              local_archive_path)
         # for article in soup.find_all(attrs={"data-article-type": "meldung"}):
         #    print("article downloaded")
 
 
 def fetch_archive(years):
+    """Downloads and saves all articles published in certain years"""
     WEEKS = 52
 
     for year in years:
-        archive_path = ARCHIVE_PATH + str(year) + "/"
-        if not os.path.exists(archive_path):
-            os.makedirs(archive_path)
         for week in range(1, WEEKS + 1):
             archive_url = ARCHIVE_BASE_URL
             archive_url += "?jahr=" + str(year) + ";woche=" + str(week)
@@ -93,22 +84,23 @@ def fetch_archive(years):
                 links = extract_article_links(extract_url)
                 print("=== retrieving articles ["
                       + year + " week " + str(week) + "] ===")
-                get_articles(links, local_archive_path=archive_path)
+                get_articles(links, local_archive_path=ARCHIVE_PATH)
 
     return 0
 
 
 def main(argv):
+    """Shit happens here, for now"""
     print_paths()
     years = ['2017', '2016', '2015', '2014', '2013', '2012', '2011']
     try:
         opts, args = getopt.getopt(argv, "hty:", ["years="])
     except getopt.GetoptError:
-        print('Usage: python heisearchiver.hdl [-y <years>]')
+        print('Usage: python heisearchiver.downloader [-y <years>]')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('Usage: python heisearchiver.hdl [-y <years>]')
+            print('Usage: python heisearchiver.downloader [-y <years>]')
             sys.exit()
         elif opt in ("-y", "--years"):
             years = arg.split(',')
