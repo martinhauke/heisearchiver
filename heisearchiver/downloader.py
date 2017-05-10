@@ -70,6 +70,7 @@ def get_articles(article_links, local_archive_path=ARCHIVE_PATH):
 
 
 def fetch_archive(years):
+    """Downloads and saves all articles published in certain years"""
     WEEKS = 52
 
     for year in years:
@@ -89,6 +90,7 @@ def fetch_archive(years):
 
 
 def main(argv):
+    """Shit happens here, for now"""
     print_paths()
     years = ['2017', '2016', '2015', '2014', '2013', '2012', '2011']
     try:

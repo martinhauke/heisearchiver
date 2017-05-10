@@ -4,6 +4,7 @@ from heisearchiver.parser import Parser
 
 
 def write_article_to_file(content, path):
+    """Writes an article to local file"""
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'wb') as f:
         f.write(content.encode("utf-8"))
@@ -11,6 +12,7 @@ def write_article_to_file(content, path):
 
 
 def save_article(article_id, content, path=None):
+    """Saves an article locally"""
     # TODO add option for saving to database instead
     parser = Parser(content)
     if path is None:
