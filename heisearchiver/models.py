@@ -1,9 +1,16 @@
 # Database models for the archive
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy import Table, Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import (Table, Column, Integer, String, ForeignKey, DateTime,
+                        create_engine)
+from sqlalchemy.orm.session import sessionmaker
 
 Base = declarative_base()
+engine = create_engine('sphpqlite:///dev_db.sqlite')
+Session = sessionmaker()
+Session.configure(bind=engine)
+session = Session()
+
 
 # association table article_author
 article_author = Table('article_author', Base.metadata,
@@ -72,8 +79,8 @@ class Article_Link(Base):
     __tablename__ = 'article_link'
     article_id = Column(Integer, ForeignKey('article.id'), primary_key=True)
     link_id = Column(Integer, ForeignKey('link.id'), primary_key=True)
-    rel = Column(String, nullable=True),
-    text = Column(String),
+    rel = Column(String, nullable=True)
+    text = Column(String)
     target = Column(String)
 
     article = relationship("Article",
@@ -278,3 +285,6 @@ class Paragraph(Base):
 
     def __repr__(self):
         return '<Paragraph {}>'.format(self.id)
+
+
+Base.metadata.create_all(engine)
