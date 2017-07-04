@@ -1,5 +1,8 @@
 # Project specific files
 archive/*
+dbschema.png
+uml.png
+dev_db.sqlite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
