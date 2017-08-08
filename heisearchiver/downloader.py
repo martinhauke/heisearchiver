@@ -23,6 +23,7 @@ def get_page(url):
         response = urlopen(url)
         webContent = response.read()
     except urllib.error.HTTPError as e:
+        print("[HTTPError]")
         print(e.code)
         return None
     except ValueError as e:
@@ -36,7 +37,7 @@ def extract_article_links(content):
     """Tries to exctract links to articles and returns them in a list"""
     article_links = {}
     if content:
-        soup = BeautifulSoup(content, 'html.parser')
+        soup = BeautifulSoup(content, 'html5lib')
 
         for link in soup.find_all('a'):
             lhref = link.get('href')
@@ -62,7 +63,7 @@ def get_articles(article_links, local_archive_path=ARCHIVE_PATH):
         if not content:
             print("[ERROR]: Page not found")
             continue
-        soup = BeautifulSoup(content, "html.parser")
+        soup = BeautifulSoup(content, "html5lib")
         archiver.save_article(article_id, soup.prettify().encode("utf-8"),
                               local_archive_path)
         # for article in soup.find_all(attrs={"data-article-type": "meldung"}):
@@ -71,19 +72,19 @@ def get_articles(article_links, local_archive_path=ARCHIVE_PATH):
 
 def fetch_archive(years):
     """Downloads and saves all articles published in certain years"""
-    WEEKS = 52
+    MONTHS = 12
 
     for year in years:
-        for week in range(1, WEEKS + 1):
+        for month in range(1, MONTHS):
             archive_url = ARCHIVE_BASE_URL
-            archive_url += "?jahr=" + str(year) + ";woche=" + str(week)
+            archive_url += str(year) + "/" + str(month).zfill(2)
 
             extract_url = str(get_page(archive_url))
 
             if extract_url:
                 links = extract_article_links(extract_url)
                 print("=== retrieving articles ["
-                      + year + " week " + str(week) + "] ===")
+                      + year + " month " + str(month).zfill(2) + "] ===")
                 get_articles(links, local_archive_path=ARCHIVE_PATH)
 
     return 0
